@@ -1,25 +1,33 @@
 //jshint esnext:true
 'use strict';
 
-var webUrl = "";
+let webUrl = "";
+let token = null;
 class WP {
-    constructor(url) {
+    constructor(url, _token) {
         webUrl = url;
+        if(_token){
+            token = _token;
+        }
     }
 
     _getCall(url){
+        let headers = {
+            'Cache-Control': 'no-cache'
+        };
+
+        if(token){
+            headers.Authorization = 'Bearer ' + token;
+        }
+
         return fetch(url,
             {
                 method: "GET",
-                headers: {
-                    'Cache-Control': 'no-cache'
-                }
-            }
-        )
+                headers
+            })
             .then((response) => {
                 return response.json();
-            }
-        )
+            })
             .catch((ex) => {
                 throw ex;
             }
@@ -82,33 +90,33 @@ class WP {
 
     Media(data) {   
         let url = webUrl + "/wp-json/wp/v2/media";
-    if (data) {
-        if (data.search !== null && data.search !== '') {
-            url = webUrl + "/wp-json/wp/v2/media?search=" + data.search;
-        }
+        if (data) {
+            if (data.search !== null && data.search !== '') {
+                url = webUrl + "/wp-json/wp/v2/media?search=" + data.search;
+            }
 
-        if (data.id !== null && data.id !== '') {
-            url = webUrl + "/wp-json/wp/v2/media/" + data.id;
+            if (data.id !== null && data.id !== '') {
+                url = webUrl + "/wp-json/wp/v2/media/" + data.id;
+            }
         }
-    }
         return this._getCall(url);
     }
 
     Comments(data) {   
         let url = webUrl + "/wp-json/wp/v2/comments?a=a";
-    if (data) {
-        if (data.search !== null && data.search !== '') {
-            url = url + "&search=" + data.search;
-        }
-        
-        if (data.post !== null && data.post !== '') {
-            url = url + "&post=" + data.post;
-        }
+        if (data) {
+            if (data.search !== null && data.search !== '') {
+                url = url + "&search=" + data.search;
+            }
+            
+            if (data.post !== null && data.post !== '') {
+                url = url + "&post=" + data.post;
+            }
 
-        if (data.id !== null && data.id !== '') {
-            url = webUrl + "/wp-json/wp/v2/comment/" + data.id;
+            if (data.id !== null && data.id !== '') {
+                url = webUrl + "/wp-json/wp/v2/comment/" + data.id;
+            }
         }
-    }
         return this._getCall(url);
     }
 
